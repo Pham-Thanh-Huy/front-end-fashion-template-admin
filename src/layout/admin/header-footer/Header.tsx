@@ -236,11 +236,6 @@ const Header: React.FC = () => {
                   </li>
                 </ul>
               </li>
-              <li>
-                <a href="#">
-                  <span>Giao diện người dùng</span>
-                </a>
-              </li>
             </ul>
           </div>
           <div className="clearfix" />

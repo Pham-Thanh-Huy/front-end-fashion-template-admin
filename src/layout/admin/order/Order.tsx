@@ -1,6 +1,49 @@
-import React from "react";
+import { jwtDecode } from "jwt-decode";
+import React, { useEffect, useState } from "react";
+import { linkApi } from "../../../utils/ApiUrl";
+import ReactPaginate from "react-paginate";
+import Orders from "../../../entity/Order";
 
 const Order = () => {
+  const jwt = sessionStorage.getItem("jwtToken");
+  const jwtParse = jwt ? jwtDecode(jwt) : null;
+  const username = jwtParse?.sub;
+  const pageSize = 5;
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
+  const [key, setKey] = useState(0);
+  const [orderList, setOrderList] = useState<Orders[]>([]);
+
+
+  useEffect(() => {
+    fetch(linkApi + `/api/order/get/all/pagination?size=${pageSize}`,{
+      headers : {
+        'Authorization' : `Bearer ${jwt}`
+      }
+    }).then((res) => res.json())
+      .then((data) => { setTotalPage(data.data.totalPages); console.log(data.data.totalPages) })
+      .catch((err) => console.log("Lỗi khi tổng trang của đơn hàng: " + err))
+
+    fetch(linkApi + `/api/order/get/all/pagination?page=${currentPage}&size=${pageSize}&sort=orderId,desc`, {
+      headers : {
+        'Authorization' : `Bearer ${jwt}`
+      }
+    }).then((res) => res.json())
+      .then((data) => {
+        if (data.code === 200) {
+          setOrderList(data.data.content)
+        } else {
+            console.log("Gặp lỗi trong quá trình toàn bộ đơn hàng: " + data.message)
+        }
+      })
+      .catch((err) => console.log("Lỗi khi tổng trang của đơn hàng: " + err))
+  }, [key])
+
+  function handlePageClick(selectedItem: { selected: number; }): void {
+    setCurrentPage(selectedItem.selected);
+    setKey(key + 1)
+  }
+
   return (
     <div>
       <div className="content-page">
@@ -15,7 +58,7 @@ const Order = () => {
                 </div>
               </div>
             </div>
-            {/* end page title */}  
+            {/* end page title */}
             <div className="row">
               <div className="col-xl-3 col-lg-6">
                 <div className="card widget-flat">
@@ -102,274 +145,93 @@ const Order = () => {
                     <h4 className="header-title">Recent Customers</h4>
                     <div className="table-responsive mt-3">
                       <table className="table table-hover table-centered mb-0">
-                        <thead>
+                        <thead style={{ textAlign: "center" }}>
                           <tr>
-                            <th>User ID</th>
-                            <th>Basic Info</th>
-                            <th>Phone</th>
-                            <th>Location</th>
-                            <th>Created Date</th>
+                            <th>Id đơn hàng</th>
+                            <th>Tên khách hàng</th>
+                            <th>số điện thoại</th>
+                            <th>Trạng thái đơn hàng</th>
+                            <th>Ngày mua hàng</th>
                             <th>Action</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <tr>
-                            <th scope="row">#0121</th>
-                            <td>
-                              <img
-                                src="{{asset('assets-admin\images\users\avatar-4.jpg')}}"
-                                alt="contact-img"
-                                height={36}
-                                title="contact-img"
-                                className="rounded-circle float-left mr-2"
-                              />
-                              <div className="overflow-hidden">
-                                <p className="mb-0 font-weight-medium">
-                                  <a href="javascript: void(0);">
-                                    George Lanes
-                                  </a>
-                                </p>
-                                <span className="font-13">
-                                  george@examples.com
-                                </span>
-                              </div>
-                            </td>
-                            <td>606-467-7601</td>
-                            <td>New York</td>
-                            <td>2018/04/28</td>
-                            <td>
-                              <div className="btn-group dropdown">
-                                <a
-                                  href="javascript: void(0);"
-                                  className="dropdown-toggle arrow-none btn btn-light btn-sm"
-                                  data-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  <i className="mdi mdi-dots-horizontal" />
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-right">
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-pencil mr-1 text-muted" />
-                                    Edit Contact
-                                  </a>
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-delete mr-1 text-muted" />
-                                    Remove
-                                  </a>
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-email mr-1 text-muted" />
-                                    Send Email
-                                  </a>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row">#0120</th>
-                            <td>
-                              <img
-                                src="{{asset('assets-admin\images\users\avatar-4.jpg')}}"
-                                alt="contact-img"
-                                height={36}
-                                title="contact-img"
-                                className="rounded-circle float-left mr-2"
-                              />
-                              <div className="overflow-hidden">
-                                <p className="mb-0 font-weight-medium">
-                                  <a href="javascript: void(0);">
-                                    Morgan Fuller
-                                  </a>
-                                </p>
-                                <span className="font-13">
-                                  morgan@examples.com
-                                </span>
-                              </div>
-                            </td>
-                            <td>407-748-6878</td>
-                            <td>England</td>
-                            <td>2018/04/27</td>
-                            <td>
-                              <div className="btn-group dropdown">
-                                <a
-                                  href="javascript: void(0);"
-                                  className="dropdown-toggle arrow-none btn btn-light btn-sm"
-                                  data-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  <i className="mdi mdi-dots-horizontal" />
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-right">
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-pencil mr-1 text-muted" />
-                                    Edit Contact
-                                  </a>
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-delete mr-1 text-muted" />
-                                    Remove
-                                  </a>
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-email mr-1 text-muted" />
-                                    Send Email
-                                  </a>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row">#0119</th>
-                            <td>
-                              <img
-                                src="{{asset('assets-admin\images\users\avatar-4.jpg')}}"
-                                alt="contact-img"
-                                height={36}
-                                title="contact-img"
-                                className="rounded-circle float-left mr-2"
-                              />
-                              <div className="overflow-hidden">
-                                <p className="mb-0 font-weight-medium">
-                                  <a href="javascript: void(0);">
-                                    Charlie Daly
-                                  </a>
-                                </p>
-                                <span className="font-13">
-                                  charlie@examples.com
-                                </span>
-                              </div>
-                            </td>
-                            <td>918-766-5946</td>
-                            <td>Canada</td>
-                            <td>2018/04/27</td>
-                            <td>
-                              <div className="btn-group dropdown">
-                                <a
-                                  href="javascript: void(0);"
-                                  className="dropdown-toggle arrow-none btn btn-light btn-sm"
-                                  data-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  <i className="mdi mdi-dots-horizontal" />
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-right">
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-pencil mr-1 text-muted" />
-                                    Edit Contact
-                                  </a>
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-delete mr-1 text-muted" />
-                                    Remove
-                                  </a>
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-email mr-1 text-muted" />
-                                    Send Email
-                                  </a>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row">#0118</th>
-                            <td>
-                              <img
-                                src="{{asset('assets-admin\images\users\avatar-4.jpg')}}"
-                                alt="contact-img"
-                                height={36}
-                                title="contact-img"
-                                className="rounded-circle float-left mr-2"
-                              />
-                              <div className="overflow-hidden">
-                                <p className="mb-0 font-weight-medium">
-                                  <a href="javascript: void(0);">
-                                    Skye Saunders
-                                  </a>
-                                </p>
-                                <span className="font-13">
-                                  skye@examples.com
-                                </span>
-                              </div>
-                            </td>
-                            <td>302-232-1376</td>
-                            <td>France</td>
-                            <td>2018/04/26</td>
-                            <td>
-                              <div className="btn-group dropdown">
-                                <a
-                                  href="javascript: void(0);"
-                                  className="dropdown-toggle arrow-none btn btn-light btn-sm"
-                                  data-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  <i className="mdi mdi-dots-horizontal" />
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-right">
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-pencil mr-1 text-muted" />
-                                    Edit Contact
-                                  </a>
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-delete mr-1 text-muted" />
-                                    Remove
-                                  </a>
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-email mr-1 text-muted" />
-                                    Send Email
-                                  </a>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr>
-                            <th scope="row">#0117</th>
-                            <td>
-                              <img
-                                src="{{asset('assets-admin\images\users\avatar-4.jpg')}}"
-                                alt="contact-img"
-                                height={36}
-                                title="contact-img"
-                                className="rounded-circle float-left mr-2"
-                              />
-                              <div className="overflow-hidden">
-                                <p className="mb-0 font-weight-medium">
-                                  <a href="javascript: void(0);">
-                                    Jodie Townsend
-                                  </a>
-                                </p>
-                                <span className="font-13">
-                                  jodie@examples.com
-                                </span>
-                              </div>
-                            </td>
-                            <td>251-661-5962</td>
-                            <td>Tokyo</td>
-                            <td>2017/11/28</td>
-                            <td>
-                              <div className="btn-group dropdown">
-                                <a
-                                  href="javascript: void(0);"
-                                  className="dropdown-toggle arrow-none btn btn-light btn-sm"
-                                  data-toggle="dropdown"
-                                  aria-expanded="false"
-                                >
-                                  <i className="mdi mdi-dots-horizontal" />
-                                </a>
-                                <div className="dropdown-menu dropdown-menu-right">
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-pencil mr-1 text-muted" />
-                                    Edit Contact
-                                  </a>
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-delete mr-1 text-muted" />
-                                    Remove
-                                  </a>
-                                  <a className="dropdown-item" href="#">
-                                    <i className="mdi mdi-email mr-1 text-muted" />
-                                    Send Email
-                                  </a>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
+                        <tbody style={{ textAlign: "center" }}>
+                          {orderList.map((order) => (
+                               <tr>
+                               <th scope="row">{order.orderId}</th>
+                               <td>
+                                   <img
+                                     src={order.user.imageUrl}
+                                     alt="contact-img"
+                                     height={36}
+                                     title="contact-img"
+                                     className="rounded-circle"
+                                   />
+                                   <div className="overflow-hidden">
+                                     <p className="mb-0 font-weight-medium">
+                                       <a href="javascript: void(0);">
+                                         {order.user.lastName} {order.user.firstName}
+                                       </a>
+                                     </p>
+                                     <span className="font-13">
+                                       {order.user.email}
+                                     </span>
+                                   </div>
+                                 </td>
+                               {/* <td>{order.user.}</td> */}
+                               <td>New York</td>
+                        
+                               <td>2018/04/28</td>
+                               <td>
+                                 <div className="btn-group dropdown">
+                                   <a
+                                     href="javascript: void(0);"
+                                     className="dropdown-toggle arrow-none btn btn-light btn-sm"
+                                     data-toggle="dropdown"
+                                     aria-expanded="false"
+                                   >
+                                     <i className="mdi mdi-dots-horizontal" />
+                                   </a>
+                                   <div className="dropdown-menu dropdown-menu-right">
+                                     <a className="dropdown-item" href="#">
+                                       <i className="mdi mdi-pencil mr-1 text-muted" />
+                                       Edit Contact
+                                     </a>
+                                     <a className="dropdown-item" href="#">
+                                       <i className="mdi mdi-delete mr-1 text-muted" />
+                                       Remove
+                                     </a>
+                                     <a className="dropdown-item" href="#">
+                                       <i className="mdi mdi-email mr-1 text-muted" />
+                                       Send Email
+                                     </a>
+                                   </div>
+                                 </div>
+                               </td>
+                             </tr>
+                          ))}
+
+
                         </tbody>
                       </table>
+                      <ReactPaginate
+                        breakLabel="..."
+                        nextLabel="Sau"
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={4}
+                        pageCount={totalPage}
+                        previousLabel="Trước"
+                        pageClassName="page-item"
+                        pageLinkClassName="page-link"
+                        previousClassName="page-item"
+                        previousLinkClassName="page-link"
+                        nextClassName="page-item"
+                        nextLinkClassName="page-link"
+                        breakClassName="page-item"
+                        breakLinkClassName="page-link"
+                        containerClassName="pagination"
+                        activeClassName="active"
+                      />
                     </div>
                   </div>
                 </div>
