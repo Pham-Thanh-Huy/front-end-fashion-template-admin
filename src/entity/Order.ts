@@ -2,6 +2,7 @@
             orderId: number;
             address: string;
             createdAt: string;
+            status : string;
             totalPrice: number;
             deliveryMethod: {
                 deliveryId: number;
@@ -21,6 +22,7 @@
                 firstName: string,
                 lastName: string,
                 email: string,
+                phoneNumber: string,
                 userImage: string,
                 imageUrl: string,
                 };

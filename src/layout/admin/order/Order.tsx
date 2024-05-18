@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { linkApi } from "../../../utils/ApiUrl";
 import ReactPaginate from "react-paginate";
 import Orders from "../../../entity/Order";
+import getStatusColor from "../../../utils/ConvertColor";
 
 const Order = () => {
   const jwt = sessionStorage.getItem("jwtToken");
@@ -142,13 +143,14 @@ const Order = () => {
               <div className="col-12">
                 <div className="card">
                   <div className="card-body">
-                    <h4 className="header-title">Recent Customers</h4>
+                    <h4 className="header-title">Danh sách đơn hàng</h4>
                     <div className="table-responsive mt-3">
                       <table className="table table-hover table-centered mb-0">
                         <thead style={{ textAlign: "center" }}>
                           <tr>
                             <th>Id đơn hàng</th>
                             <th>Tên khách hàng</th>
+                            <th>Email</th>
                             <th>số điện thoại</th>
                             <th>Trạng thái đơn hàng</th>
                             <th>Ngày mua hàng</th>
@@ -173,15 +175,16 @@ const Order = () => {
                                          {order.user.lastName} {order.user.firstName}
                                        </a>
                                      </p>
-                                     <span className="font-13">
-                                       {order.user.email}
-                                     </span>
+                                    
                                    </div>
                                  </td>
-                               {/* <td>{order.user.}</td> */}
-                               <td>New York</td>
+                                 <td>{order.user.email}</td>
+                               <td>{order.user.phoneNumber}</td>
+                               <td style={{ color: getStatusColor(order.status) }}>
+                                {order.status}
+                              </td>
                         
-                               <td>2018/04/28</td>
+                               <td>{order.createdAt}</td>
                                <td>
                                  <div className="btn-group dropdown">
                                    <a

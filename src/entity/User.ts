@@ -2,6 +2,7 @@ interface User {
     userId: number;
     address: string;
     age: number;
+    phoneNumber: string;
     firstName: string;
     isActive: boolean;
     lastName: string;
