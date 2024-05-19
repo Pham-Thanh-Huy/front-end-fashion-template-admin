@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { linkApi } from "../../../../utils/ApiUrl";
 import { jwtDecode } from "jwt-decode";
 import User from "../../../../entity/User";
+import { validatePriceInput } from "../../../../utils/ValidatePrice";
 
 const AddProduct = () => {
   const [categoryProduct, setCategoryProduct] = useState<CategoryProduct[]>([]);
@@ -35,7 +36,7 @@ const AddProduct = () => {
   if (!jwt) {
     window.location.href = "/login";
   }
-  const jwtParse = jwt ? jwtDecode(jwt) as any : null;
+  const jwtParse = jwt ? (jwtDecode(jwt) as any) : null;
   const username = jwtParse?.sub as string;
   const [user, setUser] = useState<User>();
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const AddProduct = () => {
         setUser(data.data);
         console.log(data.data);
       })
-      .catch((err) => console.error(err)); 
+      .catch((err) => console.error(err));
   };
   //lấy danh mục sản phẩm
   useEffect(() => {
@@ -101,12 +102,18 @@ const AddProduct = () => {
     if (!listedPrice) {
       setListedPriceError("Vui lòng nhập giá niêm yết");
       valid = false;
+    } else if (!validatePriceInput(listedPrice)) {
+      setListedPriceError("Giá niêm yết không hợp lệ");
+      valid = false;
     } else {
       setListedPriceError("");
     }
 
     if (!productPrice) {
       setProductPriceError("Vui lòng nhập giá tiền");
+      valid = false;
+    } else if (!validatePriceInput(productPrice)) {
+      setProductPriceError("Giá tiền không hợp lệ");
       valid = false;
     } else {
       setProductPriceError("");
@@ -167,11 +174,13 @@ const AddProduct = () => {
     e.preventDefault();
     if (validate()) {
       // Chuyển đổi giá trị từ chuỗi sang số
-      let confirm = window.confirm("Bạn có chắc chắn muốn thêm sản phẩm này không?");
-      if(confirm){
+      let confirm = window.confirm(
+        "Bạn có chắc chắn muốn thêm sản phẩm này không?"
+      );
+      if (confirm) {
         const listedPriceValue = convertAmount(listedPrice);
         const productPriceValue = convertAmount(productPrice);
-  
+
         // Cắt chuỗi base64 từ dữ liệu hình ảnh
         const imageList = [
           { data: productImg1.split(",")[1] },
@@ -179,14 +188,14 @@ const AddProduct = () => {
           { data: productImg3.split(",")[1] },
           { data: productImg4.split(",")[1] },
         ];
-  
+
         // Gửi dữ liệu lên server
         fetch(
           linkApi + `/api/product/add?categoryProductId=${category}&userId=6`,
           {
             method: "POST",
             headers: {
-              "Authorization" : `Bearer ${jwt}` ,
+              Authorization: `Bearer ${jwt}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -219,7 +228,7 @@ const AddProduct = () => {
           .catch((error) => {
             console.log("Error:", error);
           });
-      }else{
+      } else {
         alert("Bạn đã chọn quyết định không thêm sản phẩm nữa");
       }
     }
@@ -390,15 +399,11 @@ const AddProduct = () => {
                             id="productDescription"
                             cols={7}
                             value={productDetail}
-                            onChange={(e) =>
-                              setProductDetail(e.target.value)
-                            }
+                            onChange={(e) => setProductDetail(e.target.value)}
                           />
                         </div>
-                        </div>
-                        <span className="text-danger">
-                            {productDetail}
-                          </span>
+                      </div>
+                      <span className="text-danger">{productDetail}</span>
 
                       {/* Mô tả sản phẩm */}
                       <div className="form-group row">
