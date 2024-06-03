@@ -6,6 +6,8 @@ import { linkApi } from "../../../../utils/ApiUrl";
 import { jwtDecode } from "jwt-decode";
 import User from "../../../../entity/User";
 import { validatePriceInput } from "../../../../utils/ValidatePrice";
+import { ProductSize } from "../../../../entity/ProductSize";
+import { ProductColor } from "../../../../entity/ProductColor";
 
 const AddProduct = () => {
   const [categoryProduct, setCategoryProduct] = useState<CategoryProduct[]>([]);
@@ -16,6 +18,10 @@ const AddProduct = () => {
   const [quantity, setQuantity] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [category, setCategory] = useState("");
+  const[productSizeForm, setProductSizeForm] = useState("");
+  const [productSizeError, setProductSizeError] = useState<String>("");
+  const[productColorForm, setProductColorForm] = useState("");
+  const [productColorError, setProductColorError] = useState<String>("");
   const [productImg1, setProductImg1] = useState("");
   const [productImg2, setProductImg2] = useState("");
   const [productImg3, setProductImg3] = useState("");
@@ -31,7 +37,10 @@ const AddProduct = () => {
   const [productImg4Error, setProductImg4Error] = useState("");
   const [quantityError, setQuantityError] = useState("");
   const [productCode, setProductCode] = useState("");
+  const [productCodeError, setProductCodeError] = useState("");
   const [productDetail, setProductDetail] = useState("");
+  const[productSize, setProductSize] = useState<ProductSize[]>([]);
+  const[productColor, setProductColor] = useState<ProductColor[]>([]);
   const jwt = sessionStorage.getItem("jwtToken");
   if (!jwt) {
     window.location.href = "/login";
@@ -52,6 +61,16 @@ const AddProduct = () => {
   //lấy danh mục sản phẩm
   useEffect(() => {
     fetchData();
+
+    fetch(linkApi + `/api/product-size/get/all`)
+    .then((res) => res.json())
+    .then((data) => setProductSize(data.data.content))
+    .catch((err) => console.log(err))
+
+    fetch(linkApi + `/api/product-color/get/all`)
+    .then((res) => res.json())
+    .then((data) => setProductSize(data.data.content))
+    .catch((err) => console.log(err))
 
     fetch(linkApi + "/api/category-product/get/all")
       .then((res) => res.json())
@@ -97,6 +116,12 @@ const AddProduct = () => {
       valid = false;
     } else {
       setProductNameError("");
+    }
+
+    if(!productCode){
+      setProductCodeError("Vui lòng nhập mã của sản phẩm");
+    }else{
+      setProductCodeError("");
     }
 
     if (!listedPrice) {
@@ -161,6 +186,13 @@ const AddProduct = () => {
       setProductImg4Error("");
     }
 
+    if(!productSizeForm){
+      setProductSizeError("Vui lòng chọn size của sản phẩm");
+      valid = false
+    }else{
+      setProductSizeError("");
+    }
+
     if (!quantity) {
       setQuantityError("Vui lòng nhập số lượng sản phẩm");
       valid = false;
@@ -181,6 +213,7 @@ const AddProduct = () => {
         const listedPriceValue = convertAmount(listedPrice);
         const productPriceValue = convertAmount(productPrice);
 
+        const productSizeId = parseInt(productSizeForm);
         // Cắt chuỗi base64 từ dữ liệu hình ảnh
         const imageList = [
           { data: productImg1.split(",")[1] },
@@ -207,7 +240,10 @@ const AddProduct = () => {
               productDescription: productDescription,
               outstanding: outstanding,
               imageList: imageList,
-              stock: {
+              inventoryList: {
+                productSize : {
+                  productSizeId : productSizeId
+                },
                 quantity: quantity,
               },
             }),
@@ -294,6 +330,9 @@ const AddProduct = () => {
                             value={productCode}
                             onChange={(e) => setProductCode(e.target.value)}
                           />
+                          <span className="text-danger">
+                            {productCodeError}
+                          </span>
                         </div>
                       </div>
 
@@ -364,6 +403,30 @@ const AddProduct = () => {
                           </div>
                         </div>
                       </div>
+
+                      {/* Trường size sản phẩm */}
+                      <div className="form-group row">
+                        <label className="col-lg-2 col-form-label">
+                          Size của sản phẩm
+                        </label>
+                        <div className="col-lg-10">
+                          <select
+                            className="form-control"
+                            onChange={(e) => setProductSizeForm(e.target.value)}
+                          >
+                            <option  value="">Chọn</option>
+                            {productSize.map((item) => (
+                              <option
+                                value={item.productSizeId}
+                              >
+                                {item.sizeName}
+                              </option>
+                            ))}
+                          </select>
+                          <span className="text-danger">{productSizeError}</span>
+                        </div>
+                      </div>
+
 
                       {/* Trường "Quantity" */}
                       <div className="form-group row">
