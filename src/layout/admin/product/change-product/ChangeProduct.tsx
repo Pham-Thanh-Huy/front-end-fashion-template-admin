@@ -17,7 +17,7 @@ const ChangeProduct = () => {
   const [listedPrice, setListedPrice] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [outstanding, setOutstanding] = useState(false);
-  const [quantity, setQuantity] = useState("");
+
   const [productDescription, setProductDescription] = useState("");
   const [category, setCategory] = useState("");
   const [productImg1, setProductImg1] = useState<ImageData | null>(null);
@@ -54,7 +54,6 @@ const ChangeProduct = () => {
     null
   );
   const [nameProductImg4, setNameProductImg4] = useState<String>("");
-  const [quantityError, setQuantityError] = useState("");
   const [stockId, setStockId] = useState("");
   const [productCode, setProductCode] = useState("");
   const [productDetail, setProductDetail] = useState("");
@@ -65,7 +64,7 @@ const ChangeProduct = () => {
   const searchParam = new URLSearchParams(location.search);
   const productId = searchParam.get("productId");
   const fetchData = async () => {
-    await fetch(linkApi + `/api/user/get/by-username?username=${username}`)
+    await fetch(linkApi + `/api/user/get/by/username?username=${username}`)
       .then((res) => res.json())
       .then((data) => {
         setUser(data.data);
@@ -98,7 +97,12 @@ const ChangeProduct = () => {
 
     //lấy thông tin sản phẩm
     fetch(linkApi + `/api/product/get/${productId}`)
-      .then((res) => res.json())
+    .then((res) => {
+      if (res.status === 401 || res.status === 404) {
+        navigate(-1);
+      }
+      return res.json();
+    })
       .then((data) => {
         if (data.code === 200) {
           if (data && data.data) {
@@ -108,7 +112,6 @@ const ChangeProduct = () => {
             setListedPrice(data.data.listedPrice.toString());
             setProductPrice(data.data.productPrice.toString());
             setOutstanding(data.data.outstanding);
-            setQuantity(data.data.stock.quantity);
             setProductDescription(data.data.productDescription);
             setProductDetail(data.data.productDetail);
             setCategory(data.data.categoryProduct.categoryId);
@@ -121,6 +124,7 @@ const ChangeProduct = () => {
             console.error("No product data found.");
           }
         }
+        
         if (data.code === 404) {
           navigate(-1);
         }
@@ -209,12 +213,6 @@ const ChangeProduct = () => {
       setCategoryError("");
     }
 
-    if (!quantity) {
-      setQuantityError("Vui lòng nhập số lượng sản phẩm");
-      valid = false;
-    } else {
-      setQuantityError("");
-    }
 
     return valid;
   };
@@ -263,10 +261,6 @@ const ChangeProduct = () => {
           productDescription,
           outstanding,
           imageList,
-          stock: {
-            stockId,
-            quantity,
-          },
         };
 
         // Send the PUT request
@@ -428,25 +422,7 @@ const ChangeProduct = () => {
                         </div>
                       </div>
 
-                      {/* Trường "Quantity" */}
-                      <div className="form-group row">
-                        <label
-                          className="col-lg-2 col-form-label"
-                          htmlFor="quantity"
-                        >
-                          Số lượng
-                        </label>
-                        <div className="col-lg-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="quantity"
-                            value={quantity}
-                            onChange={(e) => setQuantity(e.target.value)}
-                          />
-                          <span className="text-danger">{quantityError}</span>
-                        </div>
-                      </div>
+         
                       {/* Thêm trường dữ liệu số lượng tại đây */}
 
                       <div className="form-group row">

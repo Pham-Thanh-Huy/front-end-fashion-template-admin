@@ -12,6 +12,7 @@ const ListProduct = () => {
   const [totalPage, setTotalPage] = useState(0);
   const[currentPage, setCurrentPage] = useState(0);
   const jwt = sessionStorage.getItem("jwtToken");
+
   
   const sizePage = 5;
   useEffect(() => {
@@ -159,6 +160,13 @@ const ListProduct = () => {
                                       >
                                         <i className="mdi mdi-pencil mr-1 text-muted" />
                                         Sửa sản phẩm
+                                      </a>
+                                      <a
+                                        className="dropdown-item"
+                                        href={`/add-product-inventory?productId=${item.productId}`}
+                                      >
+                                        <i className="mdi mdi-pencil mr-1 text-muted" />
+                                        Thêm tồn kho cho sản phẩm 
                                       </a>
                                       <a
                                         className="dropdown-item"

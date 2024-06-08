@@ -18,9 +18,9 @@ const AddProduct = () => {
   const [quantity, setQuantity] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [category, setCategory] = useState("");
-  const[productSizeForm, setProductSizeForm] = useState("");
+  const [productSizeForm, setProductSizeForm] = useState("");
   const [productSizeError, setProductSizeError] = useState<String>("");
-  const[productColorForm, setProductColorForm] = useState("");
+  const [productColorForm, setProductColorForm] = useState("");
   const [productColorError, setProductColorError] = useState<String>("");
   const [productImg1, setProductImg1] = useState("");
   const [productImg2, setProductImg2] = useState("");
@@ -39,9 +39,10 @@ const AddProduct = () => {
   const [productCode, setProductCode] = useState("");
   const [productCodeError, setProductCodeError] = useState("");
   const [productDetail, setProductDetail] = useState("");
-  const[productSize, setProductSize] = useState<ProductSize[]>([]);
-  const[productColor, setProductColor] = useState<ProductColor[]>([]);
+  const [productSize, setProductSize] = useState<ProductSize[]>([]);
+  const [productColor, setProductColor] = useState<ProductColor[]>([]);
   const jwt = sessionStorage.getItem("jwtToken");
+  const [productDetailError, setProductDetailError] = useState("");
   if (!jwt) {
     window.location.href = "/login";
   }
@@ -63,14 +64,14 @@ const AddProduct = () => {
     fetchData();
 
     fetch(linkApi + `/api/product-size/get/all`)
-    .then((res) => res.json())
-    .then((data) => setProductSize(data.data.content))
-    .catch((err) => console.log(err))
+      .then((res) => res.json())
+      .then((data) => setProductSize(data.data.content))
+      .catch((err) => console.log(err))
 
     fetch(linkApi + `/api/product-color/get/all`)
-    .then((res) => res.json())
-    .then((data) => setProductSize(data.data.content))
-    .catch((err) => console.log(err))
+      .then((res) => res.json())
+      .then((data) => setProductColor(data.data.content))
+      .catch((err) => console.log(err))
 
     fetch(linkApi + "/api/category-product/get/all")
       .then((res) => res.json())
@@ -118,9 +119,16 @@ const AddProduct = () => {
       setProductNameError("");
     }
 
-    if(!productCode){
+    if (!productDetail) {
+      setProductDetailError("Vui lòng nhập mô tả sản phẩm");
+      valid = false;
+    } else {
+      setProductDetailError("");
+    }
+
+    if (!productCode) {
       setProductCodeError("Vui lòng nhập mã của sản phẩm");
-    }else{
+    } else {
       setProductCodeError("");
     }
 
@@ -186,11 +194,18 @@ const AddProduct = () => {
       setProductImg4Error("");
     }
 
-    if(!productSizeForm){
+    if (!productSizeForm) {
       setProductSizeError("Vui lòng chọn size của sản phẩm");
       valid = false
-    }else{
+    } else {
       setProductSizeError("");
+    }
+
+    if (!productColorForm) {
+      setProductColorError("Vui lòng chọn màu của sản phẩm");
+      valid = false;
+    } else {
+      setProductColorError("");
     }
 
     if (!quantity) {
@@ -240,12 +255,17 @@ const AddProduct = () => {
               productDescription: productDescription,
               outstanding: outstanding,
               imageList: imageList,
-              inventoryList: {
-                productSize : {
-                  productSizeId : productSizeId
-                },
-                quantity: quantity,
-              },
+              inventoryList: [
+                {
+                  quantity: quantity,
+                  productSize: {
+                    productSizeId: productSizeForm
+                  },
+                  productColor: {
+                    productColorId: productColorForm
+                  }
+                }
+              ]
             }),
           }
         )
@@ -380,7 +400,7 @@ const AddProduct = () => {
                         </div>
                       </div>
 
-                      {/* Số lượng */}
+                  
                       <div className="form-group row">
                         <label className="col-lg-2 col-form-label">
                           Sản phẩm nổi bật
@@ -414,7 +434,7 @@ const AddProduct = () => {
                             className="form-control"
                             onChange={(e) => setProductSizeForm(e.target.value)}
                           >
-                            <option  value="">Chọn</option>
+                            <option value="">Chọn</option>
                             {productSize.map((item) => (
                               <option
                                 value={item.productSizeId}
@@ -424,6 +444,28 @@ const AddProduct = () => {
                             ))}
                           </select>
                           <span className="text-danger">{productSizeError}</span>
+                        </div>
+                      </div>
+
+                      <div className="form-group row">
+                        <label className="col-lg-2 col-form-label">
+                          Màu của sản phẩm
+                        </label>
+                        <div className="col-lg-10">
+                          <select
+                            className="form-control"
+                            onChange={(e) => setProductColorForm(e.target.value)}
+                          >
+                            <option value="">Chọn</option>
+                            {productColor.map((item) => (
+                              <option
+                                value={item.productColorId}
+                              >
+                                {item.colorName}
+                              </option>
+                            ))}
+                          </select>
+                          <span className="text-danger">{productColorError}</span>
                         </div>
                       </div>
 
@@ -464,9 +506,10 @@ const AddProduct = () => {
                             value={productDetail}
                             onChange={(e) => setProductDetail(e.target.value)}
                           />
+                          <span className="text-danger">{productDetailError}</span>
                         </div>
                       </div>
-                      <span className="text-danger">{productDetail}</span>
+
 
                       {/* Mô tả sản phẩm */}
                       <div className="form-group row">

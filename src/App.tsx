@@ -18,6 +18,8 @@ import UserOrStaffDetail from "./layout/admin/user/UserOrStaffDetail";
 import UserList from "./layout/admin/user/user/User";
 import UserStaffAdd from "./layout/admin/user/user-staff-add/UserStaffAdd";
 import UserStaffUpdate from "./layout/admin/user/user-staff-update/UserStaffUpdate";
+import AddInventoryProduct from "./layout/admin/product/add-update-inventory-product/AddInventoryProduct";
+import UpdateInventoryProduct from "./layout/admin/product/add-update-inventory-product/UpdateInventoryProduct";
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!sessionStorage.getItem("jwtToken"));
@@ -53,6 +55,7 @@ function AppWrapper({ isLoggedIn, setIsLoggedIn }: { isLoggedIn: boolean, setIsL
         return <Navigate to="/login" />;
     }
 
+
     // Nếu đã đăng nhập, hiển thị Header và các route khác
     return (
         <div className="">
@@ -79,6 +82,8 @@ function AppWrapper({ isLoggedIn, setIsLoggedIn }: { isLoggedIn: boolean, setIsL
                 <Route path="/admin-Info" element={<Info />} />
                 <Route path="/user-or-staff-Info" element={<UserOrStaffDetail />} />
                 <Route path="/change-user-or-staff" element = {<UserStaffUpdate />} />
+                <Route path="/add-product-inventory" element = {<AddInventoryProduct />} />
+                <Route path="/update-product-inventory" element = {<UpdateInventoryProduct />} />
             </Routes>
         </div>
     );
