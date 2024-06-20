@@ -689,7 +689,7 @@ const AddProduct = () => {
                           {productImg4 && (
                             <img
                               style={{ width: 200, height: 200 }}
-                              src={productImg1}
+                              src={productImg4}
                               alt="product-img-4"
                               className="img-fluid mt-2"
                             />

@@ -113,12 +113,12 @@ const ListProduct = () => {
                                 <th scope="row">{item.productId}</th>
                                 <td>
                                   <img
-                                    style={{ marginLeft: 30 }}
+                                    style={{width : '30px' }}
                                     src={item.imageList[0].imageUrl}
                                     alt="contact-img"
                                     height={36}
                                     title="contact-img"
-                                    className="rounded-circle  mr-2"
+                                    className=" mr-2"
                                   />
                                 </td>
                                 <td>{item.productName}</td>
@@ -145,14 +145,14 @@ const ListProduct = () => {
                                 <td>{item.createdAt}</td>
                                 <td>
                                   <div className="btn-group dropdown">
-                                    <a
-                                      href="javascript: void(0);"
-                                      className="dropdown-toggle arrow-none btn btn-light btn-sm"
-                                      data-toggle="dropdown"
-                                      aria-expanded="false"
-                                    >
-                                      <i className="mdi mdi-dots-horizontal" />
-                                    </a>
+                                  <a
+                                    href="#"
+                                    className="dropdown-toggle arrow-none btn btn-light btn-sm"
+                                    data-toggle="dropdown"
+                                    aria-expanded="false"
+                                  >
+                                    <i className="mdi mdi-dots-horizontal" />
+                                  </a>
                                     <div className="dropdown-menu dropdown-menu-right">
                                       <a
                                         className="dropdown-item"
@@ -167,6 +167,13 @@ const ListProduct = () => {
                                       >
                                         <i className="mdi mdi-pencil mr-1 text-muted" />
                                         Thêm tồn kho cho sản phẩm 
+                                      </a>
+                                      <a
+                                        className="dropdown-item"
+                                        href={`/update-product-inventory?productId=${item.productId}`}
+                                      >
+                                        <i className="mdi mdi-pencil mr-1 text-muted" />
+                                        Cập nhật số lượng sản phẩm cho tồn kho cho sản phẩm 
                                       </a>
                                       <a
                                         className="dropdown-item"

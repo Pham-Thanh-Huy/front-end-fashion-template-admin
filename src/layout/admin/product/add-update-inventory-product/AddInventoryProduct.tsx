@@ -75,7 +75,7 @@ const AddInventoryProduct = () => {
                         alert("Thêm tồn kho thành công")
                         window.location.reload();
                     }else{
-                        setErrorMessage(data.message)
+                        setErrorMessage(data.message)   
                     }
                     
                 })

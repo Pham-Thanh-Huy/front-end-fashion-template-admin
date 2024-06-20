@@ -6,6 +6,7 @@ import getStatusColor from "../../../utils/ConvertColor";
 import { ConverToVnd } from "../../../utils/ConvertVnd";
 import { linkApi } from "../../../utils/ApiUrl";
 import { jwtDecode } from "jwt-decode";
+import { ORDER_CANCELLED, ORDER_COMPLETED, ORDER_CONFIRMED, ORDER_DELIVERING, ORDER_PROCESSING } from "../../../utils/StatusOrder";
 
 const Order = () => {
   const jwt = sessionStorage.getItem("jwtToken");
@@ -22,11 +23,7 @@ const Order = () => {
   const [totalOrderSuccess, setTotalOrderSuccess] = useState(0);
   const [totalOrderCancelled, setTotalOrderCancelled] = useState(0);
 
-  const ORDER_PROCESSING = "Đang xử lý";
-  const ORDER_CONFIRMED = "Đã xác nhận";
-  const ORDER_DELIVERING = "Đang giao hàng";
-  const ORDER_COMPLETED = "Đơn hàng thành công";
-  const ORDER_CANCELLED = "Đơn hàng bị huỷ";
+
 
   useEffect(() => {
     fetch(linkApi + `/api/order/get/totalprice/expected`, {
@@ -93,7 +90,7 @@ const Order = () => {
         .catch((err) => console.log("Lỗi khi tổng trang của đơn hàng: " + err));
       fetch(
         linkApi +
-          `/api/order/get/all/pagination?page=${currentPage}&size=${pageSize}&sort=orderId,desc`,
+        `/api/order/get/all/pagination?page=${currentPage}&size=${pageSize}&sort=orderId,desc`,
         {
           headers: {
             Authorization: `Bearer ${jwt}`,
@@ -129,7 +126,7 @@ const Order = () => {
 
       fetch(
         linkApi +
-          `/api/order/get/by/status?status=${status}&page=${currentPage}&size=${pageSize}&sort=orderId,desc`,
+        `/api/order/get/by/status?status=${status}&page=${currentPage}&size=${pageSize}&sort=orderId,desc`,
         {
           headers: {
             Authorization: `Bearer ${jwt}`,
@@ -260,7 +257,7 @@ const Order = () => {
                 </div>
               </div>
             </div>
-             ̰
+            ̰
             <div className="row">
               <div className="col-12">
                 <div className="card">
@@ -346,10 +343,15 @@ const Order = () => {
                                     <i className="mdi mdi-dots-horizontal" />
                                   </a>
                                   <div className="dropdown-menu dropdown-menu-right">
-                                    <a className="dropdown-item" href="#">
+                                    <a className="dropdown-item" href={`/admin-order-detail?orderId=${order.orderId}`}>
+                                      <i className="mdi mdi-chevron-right mr-1 text-muted" />
+                                      Xem chi tiết đơn hàng
+                                    </a>
+                                    <a className="dropdown-item" href={`/admin-order-update-status?orderId=${order.orderId}`}>
                                       <i className="mdi mdi-pencil mr-1 text-muted" />
                                       Cập nhật trạng thái đơn hàng
                                     </a>
+
                                   </div>
                                 </div>
                               </td>

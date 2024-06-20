@@ -20,6 +20,8 @@ import UserStaffAdd from "./layout/admin/user/user-staff-add/UserStaffAdd";
 import UserStaffUpdate from "./layout/admin/user/user-staff-update/UserStaffUpdate";
 import AddInventoryProduct from "./layout/admin/product/add-update-inventory-product/AddInventoryProduct";
 import UpdateInventoryProduct from "./layout/admin/product/add-update-inventory-product/UpdateInventoryProduct";
+import OrderDetail from "./layout/admin/order/order-detail/OrderDetail";
+import UpdateStatusOrder from "./layout/admin/order/update-status-order/UpdateStatusOrder";
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!sessionStorage.getItem("jwtToken"));
@@ -62,6 +64,8 @@ function AppWrapper({ isLoggedIn, setIsLoggedIn }: { isLoggedIn: boolean, setIsL
             <Header />
             <Routes>
                 <Route path="/" element={<Order />} />
+                <Route path="/admin-order-detail" element = {<OrderDetail />} />
+                <Route path="/admin-order-update-status" element = {<UpdateStatusOrder />}  />
                 <Route path="/admin-staff-management" element={<Staff />} />
                 <Route path="/admin-user-management" element={<UserList />} />
                 <Route path="/admin-user-staff-add" element={<UserStaffAdd />} />
